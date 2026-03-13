@@ -56,47 +56,39 @@ body::before{
 .screen.behind{transform:translateX(-28%);opacity:0;pointer-events:none}
 
 /* HOME */
-/* HOME: fixed header + scrollable list */
-#home{background:var(--bg);overflow:hidden}
+/* HOME: fully scrollable, no fixed header */
+#home{background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .home-top{
-  position:fixed;top:0;left:0;right:0;
   padding:calc(36px + env(safe-area-inset-top)) 0 18px;text-align:center;
   background:var(--bg);
-  border-bottom:1px solid transparent;
-  transition:padding .35s ease, border-color .35s ease;
-  z-index:10;
-}
-.home-top.compact{
-  padding:calc(10px + env(safe-area-inset-top)) 0 10px;
-  border-color:var(--div);
+  border-bottom:1px solid var(--div);
 }
 .home-list{
-  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding-top:var(--home-hdr-h, 160px);
+  padding-bottom:32px;
 }
 .cross-wrap{
   overflow:hidden;max-height:76px;opacity:1;
   transition:max-height .35s ease,opacity .25s ease;
 }
-.home-top.compact .cross-wrap{max-height:0;opacity:0}
+
 .home-title{
   font-family:"Cinzel",serif;font-size:28px;font-weight:700;
   color:var(--gold);letter-spacing:5px;text-transform:uppercase;
   transition:font-size .35s ease,letter-spacing .35s ease;
 }
-.home-top.compact .home-title{font-size:17px;letter-spacing:2px}
+
 .home-sub{
   font-size:12px;color:var(--txt-d);letter-spacing:2px;margin-top:6px;
   text-transform:uppercase;overflow:hidden;max-height:28px;opacity:1;
   transition:max-height .35s ease,opacity .25s ease,margin .35s ease;
 }
-.home-top.compact .home-sub{max-height:0;opacity:0;margin-top:0}
+
 .home-rule{
   height:1px;background:linear-gradient(90deg,transparent,var(--accent),var(--gold),transparent);
   margin:16px 28px 0;opacity:1;
   transition:opacity .25s ease,margin .35s ease;
 }
-.home-top.compact .home-rule{opacity:0;margin-top:0;margin-bottom:0}
+
 .section-lbl{font-family:"Cinzel",serif;font-size:9.5px;letter-spacing:3px;color:var(--accent-l);
   text-transform:uppercase;padding:20px 20px 8px}
 .grid{padding:0 14px;display:flex;flex-direction:column;gap:3px}
@@ -835,29 +827,7 @@ function onScroll() {
 })();
 
 // Shrink header on scroll
-(function() {
-  const list = document.getElementById("home-list");
-  const hdr  = document.getElementById("home-top");
-  let isCompact = false;
 
-  function updatePadding() {
-    list.style.paddingTop = hdr.offsetHeight + "px";
-  }
-  updatePadding();
-  // Update after transition completes
-  hdr.addEventListener("transitionend", updatePadding);
-
-  list.addEventListener("scroll", function() {
-    const st = list.scrollTop;
-    if (!isCompact && st > 40) {
-      isCompact = true;
-      hdr.classList.add("compact");
-    } else if (isCompact && st < 10) {
-      isCompact = false;
-      hdr.classList.remove("compact");
-    }
-  }, {passive: true});
-})();
 </script>
 </body>
 </html>

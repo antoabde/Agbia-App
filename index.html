@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Agbia"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,400&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 @font-face {
   font-family: 'OpenDyslexic';
@@ -59,6 +59,7 @@ body::before{
 /* HOME: fully scrollable, no fixed header */
 #home{background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
 .home-top{
+  position:relative;
   padding:calc(36px + env(safe-area-inset-top)) 0 18px;text-align:center;
   background:var(--bg);
   border-bottom:1px solid var(--div);
@@ -161,6 +162,13 @@ body::before{
 
 .progress{height:2px;background:var(--div);flex-shrink:0}
 .prog-fill{height:100%;background:var(--gold);width:0%;transition:width .1s}
+@keyframes slide-in-right{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slide-in-left{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slide-out-left{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-40px)}}
+@keyframes slide-out-right{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+.prayer-text{animation-duration:.22s;animation-fill-mode:both;animation-timing-function:cubic-bezier(.4,0,.2,1)}
+.prayer-text.anim-in-right{animation-name:slide-in-right}
+.prayer-text.anim-in-left{animation-name:slide-in-left}
 .rdr-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
   padding:24px 20px 90px;scroll-behavior:smooth}
 .rdr-body.fs-s{font-size:15px}
@@ -198,7 +206,7 @@ body::before{
 
 /* THEME TOGGLE */
 .theme-toggle{
-  position:absolute;top:14px;right:16px;
+  position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;
   width:36px;height:36px;border-radius:50%;
   background:var(--bg3);border:1px solid var(--div);
   display:flex;align-items:center;justify-content:center;
@@ -209,7 +217,7 @@ body::before{
 
 /* SETTINGS PANEL */
 .settings-overlay{
-  position:absolute;inset:0;background:rgba(0,0,0,.45);
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
   z-index:50;display:flex;align-items:flex-end;
   opacity:0;pointer-events:none;transition:opacity .25s;
 }
@@ -268,10 +276,10 @@ body::before{
 .font-chip.active{
   background:var(--bg3);color:var(--gold);border-color:var(--gold-d);
 }
-.font-chip[data-font="dyslexic"]{font-family:"OpenDyslexic",sans-serif;font-size:11px}
-.font-chip[data-font="garamond"]{font-family:"EB Garamond",serif}
-.font-chip[data-font="lora"]{font-family:"Lora",serif}
-.font-chip[data-font="literata"]{font-family:"Source Serif 4",serif}
+.font-chip[data-font="opensans"]{font-family:"Open Sans",sans-serif}
+.font-chip[data-font="ptserif"]{font-family:"PT Serif",serif}
+.font-chip[data-font="montserrat"]{font-family:"Montserrat",sans-serif}
+.font-chip[data-font="notosans"]{font-family:"Noto Sans",sans-serif}
 /* Font btn in reader */
 .font-btn{width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--div);
   color:var(--txt-d);display:flex;align-items:center;justify-content:center;
@@ -279,10 +287,10 @@ body::before{
 .font-btn:active{background:var(--bg4)}
 /* Apply selected font to reader body */
 .rdr-body{background:var(--rdr-bg)}
-.rdr-body.font-garamond{font-family:"EB Garamond",Georgia,serif}
-.rdr-body.font-lora{font-family:"Lora",Georgia,serif}
-.rdr-body.font-literata{font-family:"Source Serif 4",Georgia,serif}
-.rdr-body.font-dyslexic{font-family:"OpenDyslexic",sans-serif;line-height:2.1;letter-spacing:.03em}
+.rdr-body.rdr-body.font-opensans{font-family:"Open Sans",sans-serif}
+.rdr-body.font-ptserif{font-family:"PT Serif",Georgia,serif}
+.rdr-body.font-montserrat{font-family:"Montserrat",sans-serif;letter-spacing:.01em}
+.rdr-body.font-notosans{font-family:"Noto Sans",sans-serif}
 
 /* Nav buttons disabled */
 .rbar:disabled{opacity:.3;pointer-events:none}
@@ -307,6 +315,7 @@ body::before{
 <div class="screen" id="home">
   <div class="home-top" id="home-top">
     <div class="theme-toggle" id="theme-btn" onclick="toggleTheme()">🌙</div>
+    <div class="theme-toggle" style="right:auto;left:16px" onclick="openSettings()">⚙️</div>
     <div class="cross-wrap">
       <svg width="48" height="48" viewBox="0 0 52 52" style="display:block;margin:0 auto 12px">
         <circle cx="26" cy="26" r="24" fill="none" stroke="var(--gold)" stroke-width="1.2" opacity=".4"/>
@@ -367,40 +376,13 @@ body::before{
     <div class="font-btn" onclick="openSettings()">☰</div>
   </div>
   <div class="progress"><div class="prog-fill" id="prog"></div></div>
-  <div class="rdr-body fs-m font-garamond" id="rdr-body" onscroll="onScroll()"></div>
+  <div class="rdr-body font-opensans" id="rdr-body" onscroll="onScroll()"></div>
   <div class="rdr-bar">
     <button class="rbar" id="rbar-prev" onclick="navSection(-1)">‹ Prec</button>
-    <button class="rbar primary" onclick="scrollTop()">↑ Inizio</button>
+    <button class="rbar primary" onclick="scrollToTop()">↑ Inizio</button>
     <button class="rbar" id="rbar-next" onclick="navSection(1)">Succ ›</button>
   </div>
-  <!-- Settings sheet -->
-  <div class="settings-overlay" id="settings-overlay" onclick="closeSettingsOutside(event)">
-    <div class="settings-sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">Impostazioni Lettura</div>
-      <div class="sheet-row">
-        <div class="sheet-label">Tema</div>
-        <div class="font-chips">
-          <div class="font-chip active" id="theme-chip-dark" onclick="setTheme('dark',this)">🌙 Scuro</div>
-          <div class="font-chip" id="theme-chip-light" onclick="setTheme('light',this)">☀️ Chiaro</div>
-        </div>
-      </div>
-      <div class="sheet-row">
-        <div class="sheet-label">Testo</div>
-        <input type="range" class="size-slider" id="size-slider" min="13" max="26" value="17" oninput="onSizeChange(this)">
-        <div class="size-preview" id="size-preview">17</div>
-      </div>
-      <div class="sheet-row">
-        <div class="sheet-label">Font</div>
-        <div class="font-chips">
-          <div class="font-chip active" data-font="garamond" onclick="setFont('garamond',this)">Garamond</div>
-          <div class="font-chip" data-font="lora" onclick="setFont('lora',this)">Lora</div>
-          <div class="font-chip" data-font="literata" onclick="setFont('literata',this)">Source Serif</div>
-          <div class="font-chip" data-font="dyslexic" onclick="setFont('dyslexic',this)">Dislessia</div>
-        </div>
-      </div>
-    </div>
-  </div>
+
 </div>
 
 <script>
@@ -583,7 +565,13 @@ function renderRichLines(lines) {
 
 // ── STATE ──
 let curKey = null, curSects = [], curIdx = 0;
-let curFont = "garamond", curSize = 17;
+let curFont = "opensans", curSize = 17;
+try {
+  const _sf = localStorage.getItem("agbia_font");
+  const _ss = localStorage.getItem("agbia_size");
+  if (_sf) curFont = _sf;
+  if (_ss) curSize = parseInt(_ss);
+} catch(e){}
 let mezzKey = "mezzanotte1";
 
 // ── NAVIGATION ──
@@ -689,7 +677,7 @@ function renderTocItems(body, key, sects) {
   });
 }
 
-function openReader(key, idx) {
+function openReader(key, idx, dir) {
   curKey = key;
   curIdx = idx;
   curPsalmIdx = -1;
@@ -701,7 +689,8 @@ function openReader(key, idx) {
   const lines = sec.subsections
     ? sec.subsections.flatMap(s => [{ t: s.title, _psalm_title: true, _psalm_num: s.num, b:1 }, ...s.lines])
     : sec.lines;
-  rb.innerHTML = `<div class="prayer-text">${renderRichLines(lines)}</div>`;
+  const animClass = dir === 1 ? "anim-in-right" : dir === -1 ? "anim-in-left" : "";
+  rb.innerHTML = `<div class="prayer-text${animClass ? ' ' + animClass : ''}">${renderRichLines(lines)}</div>`;
   rb.scrollTop = 0;
   document.getElementById("prog").style.width = "0%";
   updateNavBtns();
@@ -732,15 +721,15 @@ function navSection(dir) {
   if (curPsalmIdx >= 0 && sec && sec.subsections) {
     const nextP = curPsalmIdx + dir;
     if (nextP >= 0 && nextP < sec.subsections.length) {
-      openPsalm(curKey, curIdx, nextP); return;
+      openPsalm(curKey, curIdx, nextP, dir); return;
     }
     // Exhausted psalms — move to adjacent section
-    if (dir > 0) { openReader(curKey, curIdx + 1); return; }
-    else { openReader(curKey, curIdx - 1); return; }
+    if (dir > 0) { openReader(curKey, curIdx + 1, dir); return; }
+    else { openReader(curKey, curIdx - 1, dir); return; }
   }
   const next = curIdx + dir;
   if (next < 0 || next >= curSects.length) return;
-  openReader(curKey, next);
+  openReader(curKey, next, dir);
 }
 
 function updateNavBtns() {
@@ -788,6 +777,18 @@ function setTheme(mode, chip) {
 
 // ── SETTINGS ──
 function openSettings() {
+  // Sync font chips with current font
+  document.querySelectorAll(".font-chip[data-font]").forEach(c => {
+    c.classList.toggle("active", c.dataset.font === curFont);
+  });
+  // Sync size slider
+  const sl = document.getElementById("size-slider");
+  if (sl) {
+    sl.value = curSize;
+    const pct = ((curSize - 13) / (26 - 13) * 100).toFixed(1);
+    sl.style.setProperty("--pct", pct + "%");
+    document.getElementById("size-preview").textContent = curSize;
+  }
   document.getElementById("settings-overlay").classList.add("open");
 }
 function closeSettingsOutside(e) {
@@ -806,6 +807,7 @@ function setFont(font, chip) {
   document.querySelectorAll(".font-chip").forEach(c => c.classList.remove("active"));
   chip.classList.add("active");
   applyReaderStyle();
+  try { localStorage.setItem("agbia_font", font); } catch(e){}
 }
 function applyReaderStyle() {
   const rb = document.getElementById("rdr-body");
@@ -813,7 +815,7 @@ function applyReaderStyle() {
   rb.className = "rdr-body font-" + curFont;
 }
 
-function scrollTop() { document.getElementById("rdr-body").scrollTo({top: 0, behavior: "smooth"}); }
+function scrollToTop() { document.getElementById("rdr-body").scrollTo({top: 0, behavior: "smooth"}); }
 function onScroll() {
   const el = document.getElementById("rdr-body");
   const pct = el.scrollTop / (el.scrollHeight - el.clientHeight) * 100;
@@ -829,5 +831,32 @@ function onScroll() {
 // Shrink header on scroll
 
 </script>
+  <div class="settings-overlay" id="settings-overlay" onclick="closeSettingsOutside(event)">
+    <div class="settings-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Impostazioni Lettura</div>
+      <div class="sheet-row">
+        <div class="sheet-label">Tema</div>
+        <div class="font-chips">
+          <div class="font-chip active" id="theme-chip-dark" onclick="setTheme('dark',this)">🌙 Scuro</div>
+          <div class="font-chip" id="theme-chip-light" onclick="setTheme('light',this)">☀️ Chiaro</div>
+        </div>
+      </div>
+      <div class="sheet-row">
+        <div class="sheet-label">Testo</div>
+        <input type="range" class="size-slider" id="size-slider" min="13" max="26" value="17" oninput="onSizeChange(this)">
+        <div class="size-preview" id="size-preview">17</div>
+      </div>
+      <div class="sheet-row">
+        <div class="sheet-label">Font</div>
+        <div class="font-chips">
+          <div class="font-chip active" data-font="opensans" onclick="setFont('opensans',this)">Open Sans</div>
+          <div class="font-chip" data-font="ptserif" onclick="setFont('ptserif',this)">PT Serif</div>
+          <div class="font-chip" data-font="montserrat" onclick="setFont('montserrat',this)">Montserrat</div>
+          <div class="font-chip" data-font="notosans" onclick="setFont('notosans',this)">Noto Sans</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
